@@ -29,17 +29,18 @@ module ExceptionNotifier
       fields.push({ title: 'Hostname', value: Socket.gethostname })
 
       if exception.backtrace
-        formatted_backtrace = "```#{exception.backtrace.join("\n")}```"
+        formatted_backtrace = exception.backtrace.join("\n")
         fields.push({ title: 'Backtrace', value: formatted_backtrace })
       end
 
       unless data.empty?
         deep_reject(data, @ignore_data_if) if @ignore_data_if.is_a?(Proc)
         data_string = data.map{|k,v| "#{k}: #{v}"}.join("\n")
-        fields.push({ title: 'Data', value: "```#{data_string}```" })
+        fields.push({ title: 'Data', value: data_string })
       end
 
-      attchs = [color: 'danger', text: text, fields: fields, mrkdwn_in: %w(text fields)]
+      fields_in_backticks = fields.map { |field| { title: field.title, value: "```#{field.value}```" }}
+      attchs = [color: 'danger', text: text, fields: fields_in_backticks, mrkdwn_in: %w(text fields)]
 
       if valid?
         send_notice(exception, options, clean_message, @message_opts.merge(attachments: attchs)) do |msg, message_opts|
