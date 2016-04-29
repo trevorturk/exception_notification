@@ -39,7 +39,7 @@ module ExceptionNotifier
         fields.push({ title: 'Data', value: data_string })
       end
 
-      fields_in_backticks = fields.map { |field| { title: field.title, value: "```#{field.value}```" }}
+      fields_in_backticks = fields.map { |field| { title: field[:title], value: "```#{field[:value]}```" }}
       attchs = [color: 'danger', text: text, fields: fields_in_backticks, mrkdwn_in: %w(text fields)]
 
       if valid?
